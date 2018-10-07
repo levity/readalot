@@ -1,0 +1,10 @@
+{
+  "name": "readalot",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "web3": "1.0.0-beta.36"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}
