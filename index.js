@@ -1,7 +1,7 @@
 const Web3 = require('web3');
 const { padLeft, padRight, numberToHex } = Web3.utils;
 
-const contractAddress = '0x9d4be2a93c37d5b9f71404811fe9afbc46675be5';
+const contractAddress = '0x26305b94e99148570b261819a60731c9540a4285';
 const contractAbi = [
   {
     constant: true,
@@ -36,7 +36,7 @@ function makeMulticallData(calls, keepAsArray, eth) {
         eth.abi.encodeFunctionSignature(method),
         eth.abi.encodeParameters(args.map(a => a[1]), args.map(a => a[0]))
       ]
-        .map(v => v ? strip0x(v) : null)
+        .map(v => (v ? strip0x(v) : null))
         .filter(v => v)
     );
   }, []);
@@ -46,14 +46,22 @@ function makeMulticallData(calls, keepAsArray, eth) {
 }
 
 async function multicall(options) {
-  const address = '0x'; // multicall contract address
   const { calls, provider } = options;
   const web3 = new Web3(provider);
   const contract = new web3.eth.Contract(contractAbi, contractAddress);
   const calldata = makeMulticallData(calls, false, web3.eth);
   const result = await contract.methods.aggregate(calldata).call();
-  console.log(result);
-  // TODO: handle return value
+  const blockNum = web3.eth.abi.decodeParameter('uint256', result.slice(0, 66));
+  // NOTE we're assuming one return value per call for now
+  const parsedVals = web3.eth.abi.decodeParameters(
+    calls.map(ele => ele.returns[0][1]),
+    '0x' + result.slice(67)
+  );
+  const retObj = { blockNum };
+  for (let i = 0; i < calls.length; i++) {
+    retObj[calls[i].returns[0][0]] = parsedVals[i];
+  }
+  console.log(retObj);
 }
 
 module.exports = { makeMulticallData, multicall };
