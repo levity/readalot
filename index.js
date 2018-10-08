@@ -1,5 +1,5 @@
 const Web3 = require('web3');
-const { padLeft, padRight, numberToHex } = Web3.utils;
+const { padLeft, numberToHex } = Web3.utils;
 
 const contractAddress = '0x26305b94e99148570b261819a60731c9540a4285';
 const contractAbi = [
@@ -52,7 +52,6 @@ async function multicall(options) {
   const calldata = makeMulticallData(calls, false, web3.eth);
   const result = await contract.methods.aggregate(calldata).call();
   const blockNum = web3.eth.abi.decodeParameter('uint256', result.slice(0, 66));
-  // NOTE we're assuming one return value per call for now
   const parsedVals = web3.eth.abi.decodeParameters(
     calls.map(ele => ele.returns[0][1]),
     '0x' + result.slice(67)

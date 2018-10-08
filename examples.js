@@ -10,6 +10,13 @@ async function example1() {
         method: 'hat()',
         returns: [['hat', 'address']]
       },
+      // mkr balance of the dev multisig
+      {
+        to: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
+        method: 'balanceOf(address)',
+        args: [['0x7bb0b08587b8a6b8945e09f1baca426558b0f06a', 'address']],
+        returns: [['mkrBalance', 'uint256']]
+      },
       // get dai's liquidation penalty
       {
         to: '0x448a5065aebb8e423f0896e6c5d525c040f59af3',
