@@ -1,7 +1,7 @@
 const { multicall } = require('./index');
 
 async function example1() {
-  await multicall({
+  const output = await multicall({
     provider: 'https://mainnet.infura.io',
     calls: [
       // get the hat from ds-chief
@@ -37,6 +37,7 @@ async function example1() {
       }
     ]
   });
+  console.log(output);
 }
 
 example1();

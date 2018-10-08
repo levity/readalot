@@ -51,16 +51,19 @@ async function multicall(options) {
   const contract = new web3.eth.Contract(contractAbi, contractAddress);
   const calldata = makeMulticallData(calls, false, web3.eth);
   const result = await contract.methods.aggregate(calldata).call();
-  const blockNum = web3.eth.abi.decodeParameter('uint256', result.slice(0, 66));
+  const blockNumber = web3.eth.abi.decodeParameter(
+    'uint256',
+    result.slice(0, 66)
+  );
   const parsedVals = web3.eth.abi.decodeParameters(
     calls.map(ele => ele.returns[0][1]),
     '0x' + result.slice(67)
   );
-  const retObj = { blockNum };
+  const retObj = { blockNumber };
   for (let i = 0; i < calls.length; i++) {
     retObj[calls[i].returns[0][0]] = parsedVals[i];
   }
-  console.log(retObj);
+  return retObj;
 }
 
 module.exports = { makeMulticallData, multicall };
